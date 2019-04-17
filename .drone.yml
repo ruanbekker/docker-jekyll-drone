@@ -5,3 +5,18 @@ pipeline:
       - gem install bundler
       - bundle install
       - bundle exec jekyll build
+
+  deploy:
+    image: drillster/drone-rsync
+    hosts: 
+      from_secret: docker_host
+    source: _site/*
+    target: ~/example.com
+    recursive: true
+    user: 
+      from_secret: docker_user
+    delete: true
+    secrets: [ rsync_key, docker_user, docker_host ]
+    when:
+      event: [ push ]
+      local: false
